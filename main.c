@@ -5,7 +5,7 @@
 
 int main() {
     AdjacencyList adj;
-    adj = readGraph("../data/exemple4_2check.txt");
+    adj = readGraph("../data/exemple1.txt");
     checkMarkovGraph(adj);
     return 0;
 }
