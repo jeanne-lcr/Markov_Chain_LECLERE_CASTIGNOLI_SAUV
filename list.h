@@ -22,4 +22,5 @@ void addCellToList(t_list *l, int arrival, float probability);
 void displayAdjacencyList(AdjacencyList adj);
 AdjacencyList readGraph(const char *filename);
 void checkMarkovGraph(AdjacencyList adj);
+void convertForMermaid(AdjacencyList adj, const char *filename);
 #endif //LIST_H

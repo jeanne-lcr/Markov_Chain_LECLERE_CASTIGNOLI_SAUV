@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "cell.h"
 #include "list.h"
+#include "utils.h"
 
 t_list createEmptyList(){
   t_list newList;
@@ -41,7 +42,7 @@ void displayAdjacencyList(AdjacencyList adj) {
   for (int i = 0; i < adj.size; i++) {
     t_cell* curr = adj.list->head;
     while (curr != NULL) {
-      printf("%f", curr->probability);
+      printf("|%d|-->", curr->arrival);
       curr = curr->next;
     }
   }
@@ -87,5 +88,37 @@ void checkMarkovGraph(AdjacencyList adj) {
     }
 }
 
-blabla
+void convertForMermaid(AdjacencyList adj, const char *filename)
+{
+    FILE *f = fopen(filename, "w");
+    if (f == NULL)
+    {
+        printf("Could not open file for writing");
+        return;
+    }
+    fprintf(f,"---\n");
+    fprintf(f,"config:\n");
+    fprintf(f, "   layout: elk\n");
+    fprintf(f, "   theme: neo\n");
+    fprintf(f, "   look: neo\n");
+    fprintf(f, "---\n\n");
+    fprintf(f,"flowchart LR\n");
+    for (int i = 1; i < adj.size +1 ; i++)
+    {
+        fprintf(f, "%s((%d))\n", getID(i), i);
+    }
+    fprintf(f,"\n");
 
+    for (int i = 0; i < adj.size  ; i++)
+    {
+        t_cell* curr = adj.list[i].head;
+        while(curr != NULL)
+        {
+            fprintf(f, "%s -->|%f|", getID(i+1), curr->probability);
+            fprintf(f, "%s\n", getID(curr->arrival));
+            curr = curr->next;
+        }
+    }
+    fclose(f);
+    printf("The mermaid file : %s\n", filename);
+}
