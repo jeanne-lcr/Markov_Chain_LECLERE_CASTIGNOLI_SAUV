@@ -5,14 +5,15 @@
 #ifndef LIST_H
 #define LIST_H
 #include "cell.h"
+//structure representing a list
 typedef struct list {
-    t_cell *head;
+    t_cell *head;//pointer to the head corresponding to the first element
 }t_list;
 
-
+//structure representing an adjacency list for a graph
 typedef struct AdjacencyList{
-    int size;
-    t_list *list;
+    int size;//number of vertices in adjacency list
+    t_list *list;//pointer to an array of lists with one for each vertex
 }AdjacencyList;
 
 t_list createEmptyList();
