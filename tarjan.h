@@ -1,5 +1,6 @@
 #ifndef TARJAN_H
 #define TARJAN_H
+
 typedef struct tarjan{
   int identifier;
   int number;
@@ -19,4 +20,10 @@ typedef struct partition{
   int size;//logical size
   int capacity;//physical size
 }t_partition;
+
+typedef struct stack{
+  int values[100];
+  int nbElmts;
+}t_stack;
+
 #endif //TARJAN_H
