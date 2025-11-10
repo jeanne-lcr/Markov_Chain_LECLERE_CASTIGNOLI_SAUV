@@ -1,7 +1,3 @@
-//
-// Created by jeann on 10/11/2025.
-//
-
 #ifndef TARJAN_H
 #define TARJAN_H
 typedef struct tarjan{
@@ -11,4 +7,16 @@ typedef struct tarjan{
   int bool;
 }t_tarjan_vertex;
 
+typedef struct class {
+  char *name; // name of the class, exemple : C1, C2,...
+  t_tarjan_vertex *vertices; //array thta points on each vertex of the array
+  int size; // logical size
+  int capacity; //physical size
+}t_class;
+
+typedef struct partition{
+  t_class *classes;
+  int size;//logical size
+  int capacity;//physical size
+}t_partition;
 #endif //TARJAN_H
