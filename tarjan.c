@@ -1,6 +1,8 @@
+#include <stdio.h>
 #include "tarjan.h"
 #include "list.h"
 #include <stdlib.h>
+#include <string.h>
 
 t_tarjan_vertex* arrayVertices(AdjacencyList adj){
     t_tarjan_vertex* arr = malloc(adj.size*sizeof(t_tarjan_vertex));
