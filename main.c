@@ -7,21 +7,17 @@
 
 
 int main() {
-    AdjacencyList adj;
-    adj = readGraph("../data/exemple_valid_step3.txt");
-    checkMarkovGraph(adj);
-    displayAdjacencyList(adj);
-    convertForMermaid(adj, "mermaid2.txt" );
+    //AdjacencyList adj;
+    //adj = readGraph("../data/exemple_valid_step3.txt");
+    //checkMarkovGraph(adj);
+    //displayAdjacencyList(adj);
+    //convertForMermaid(adj, "mermaid2.txt" );
 
-    AdjacencyList adj2 = readGraph("../data/exemple_valid_step3.txt");
+    AdjacencyList adj2 = readGraph("../data/exemple_meteo.txt");
     double **M= createMatrix(adj2);
-    for (int i=0; i< adj2.size; i++)
-    {
-        for (int j=0; j<adj2.size; j++)
-        {
-            printf("%f ",M[i][j]);
-        }
-    }
-
+    displayMatrix(M,adj2.size);
+    printf("\n");
+    double **M7 = powerMatrix(M, adj2.size, 7);
+    displayMatrix(M7,adj2.size);
     return 0;
 }

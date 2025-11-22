@@ -1,12 +1,7 @@
-//
-// Created by jeann on 21/11/2025.
-//
 #include <stdlib.h>
 #include "list.h"
 #include "matrix.h"
-
 #include <stdio.h>
-
 #include "math.h"
 
 double **createMatrix(AdjacencyList adj){
@@ -15,13 +10,13 @@ double **createMatrix(AdjacencyList adj){
     M = (double **) malloc(n * sizeof(double *));
 
     for (int i = 0; i < n; i++) {
-      M[i] = (double *) malloc(n * sizeof(double));
+      M[i] = calloc(n, sizeof(double));
     }
 
     for (int i = 0; i < n; i++) {
       t_cell* curr = adj.list[i].head;
       while (curr != NULL) {
-        M[i][(curr->arrival) - 1] = curr->probability;
+        M[i][(curr->arrival)-1] = (double)curr->probability;
         curr = curr->next;
       }
     }
@@ -55,10 +50,10 @@ double **MultiplyMatrix(double **M1, double **M2, int size){
   if (M == NULL)
   {
     printf("Malloc failed\n");
-    return 0;
+    return NULL;
   }
   for (int i = 0; i < size; i++) {
-    M[i] = (double *) malloc(size * sizeof(double));
+    M[i] = calloc(size, sizeof(double));
     if (M[i] == NULL)
     {
       printf("Malloc failed\n");
@@ -67,7 +62,7 @@ double **MultiplyMatrix(double **M1, double **M2, int size){
         free(M[h]);
       }
       free(M);
-      return 0;
+      return NULL;
     }
   }
   for (int i = 0; i < size; i++) {
@@ -88,4 +83,48 @@ double differenceMatrix(double **M1, double **M2, int size){
     }
   }
   return difference;
+}
+
+void displayMatrix(double **M, int n) {
+  if (M == NULL) {
+    printf("Matrix is NULL\n");
+    return;
+  }
+
+  printf("[");  // start outer bracket
+
+  for (int i = 0; i < n; i++) {
+    printf("[");
+    for (int j = 0; j < n; j++) {
+      printf("%.2lf", M[i][j]);
+      if (j < n - 1) printf(" ");
+    }
+    printf("]");
+    if (i < n - 1) printf("\n "); // newline + space before next row
+  }
+
+  printf("]\n");  // end outer bracket
+}
+
+double **powerMatrix(double **M, int n, int p) {
+  // make a copy of M as current power
+  double **R = malloc(n * sizeof(double *));
+  if (!R) return NULL;
+  for (int i = 0; i < n; i++) {
+    R[i] = malloc(n * sizeof(double));
+    if (!R[i]) { for (int k = 0; k < i; k++) free(R[k]); free(R); return NULL; }
+    for (int j = 0; j < n; j++) {
+      R[i][j] = M[i][j];
+    }
+  }
+
+  for (int e = 1; e < p; e++) {      // already M^1, do p-1 more multiplies
+    double **next = MultiplyMatrix(R, M, n);
+    // free old R
+    for (int i = 0; i < n; i++) free(R[i]);
+    free(R);
+    R = next;
+  }
+
+  return R;
 }
