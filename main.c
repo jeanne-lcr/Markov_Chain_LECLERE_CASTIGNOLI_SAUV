@@ -14,10 +14,10 @@ int main() {
     //convertForMermaid(adj, "mermaid2.txt" );
 
     AdjacencyList adj2 = readGraph("../data/exemple_meteo.txt");
-    double **M= createMatrix(adj2);
-    displayMatrix(M,adj2.size);
+    t_matrix M= createMatrix(adj2);
+    displayMatrix(M);
     printf("\n");
-    double **M7 = powerMatrix(M, adj2.size, 7);
-    displayMatrix(M7,adj2.size);
+    t_matrix M7 = powerMatrix(M, 7);
+    displayMatrix(M7);
     return 0;
 }

@@ -4,89 +4,96 @@
 #include <stdio.h>
 #include "math.h"
 
-double **createMatrix(AdjacencyList adj){
+t_matrix createMatrix(AdjacencyList adj){
     int n = adj.size;
-    double **M = NULL;
-    M = (double **) malloc(n * sizeof(double *));
+    t_matrix M;
+    M.size = n;
+    M.space = (double **) malloc(n * sizeof(double *));
 
     for (int i = 0; i < n; i++) {
-      M[i] = calloc(n, sizeof(double));
+      M.space[i] = calloc(n, sizeof(double));
     }
 
     for (int i = 0; i < n; i++) {
       t_cell* curr = adj.list[i].head;
       while (curr != NULL) {
-        M[i][(curr->arrival)-1] = (double)curr->probability;
+        M.space[i][(curr->arrival)-1] = (double)curr->probability;
         curr = curr->next;
       }
     }
     return M;
 }//don't forget to free the space allocated
 
-double **createMatrixWith0(int size){
-  double **M = (double **) malloc(size * sizeof(double *));
+t_matrix createMatrixWith0(int size){
+  t_matrix M;
+  M.size = size;
+  M.space = (double **) malloc(size * sizeof(double *));
   for (int i = 0; i < size; i++) {
-    M[i] = (double *) malloc(size * sizeof(double));
+    M.space[i] = (double *) malloc(size * sizeof(double));
   }
   for (int i = 0; i < size; i++) {
     for (int j = 0; j < size; j++) {
-      M[i][j] = 0.0;
+      M.space[i][j] = 0.0;
     }
   }
   return M;
 }
 
-double **CopyMatrix(double **M1, double **M2, int size){
-  for (int i = 0; i < size; i++) {
-    for (int j = 0; j < size; j++) {
-      M1[i][j] = M2[i][j];
+t_matrix CopyMatrix(t_matrix M1, t_matrix M2){
+  for (int i = 0; i < M2.size; i++) {
+    for (int j = 0; j < M2.size; j++) {
+      M1.space[i][j] = M2.space[i][j];
     }
   }
   return M1;
 }
 
-double **MultiplyMatrix(double **M1, double **M2, int size){
-  double **M = (double **) malloc(size * sizeof(double *));
-  if (M == NULL)
+t_matrix MultiplyMatrix(t_matrix M1, t_matrix M2){
+  t_matrix invalid = {0, NULL};
+  t_matrix M;
+  M.size = M1.size;
+  M.space = (double **) malloc(M1.size * sizeof(double *));
+  if (M.space == NULL)
   {
     printf("Malloc failed\n");
-    return NULL;
+    return invalid;
   }
-  for (int i = 0; i < size; i++) {
-    M[i] = calloc(size, sizeof(double));
-    if (M[i] == NULL)
+  for (int i = 0; i < M1.size; i++) {
+    M.space[i] = calloc(M1.size, sizeof(double));
+    if (M.space[i] == NULL)
     {
       printf("Malloc failed\n");
-      for (int h=0; h<size; h++)
+      for (int h=0; h<M1.size; h++)
       {
-        free(M[h]);
+        free(M.space[h]);
       }
-      free(M);
-      return NULL;
+      free(M.space);
+      return invalid;
     }
   }
-  for (int i = 0; i < size; i++) {
-    for (int j = 0; j < size; j++) {
-      for (int k = 0; k < size; k++) {
-        M[i][j] += M1[i][k] * M2[k][j];
+  for (int i = 0; i < M1.size; i++) {
+    for (int j = 0; j < M1.size; j++) {
+      for (int k = 0; k < M1.size; k++) {
+        M.space[i][j] += M1.space[i][k] * M2.space[k][j];
       }
     }
   }
   return M;
 }
 
-double differenceMatrix(double **M1, double **M2, int size){
+double differenceMatrix(t_matrix M1, t_matrix M2){
   double difference = 0.0;
-  for (int i = 0; i < size; i++) {
-    for (int j = 0; j < size; j++) {
-      difference = difference + fabs(M1[i][j] - M2[i][j]); // fabs = absolut value of float values
+  for (int i = 0; i < M1.size; i++) {
+    for (int j = 0; j < M1.size; j++) {
+      difference = difference + fabs(M1.space[i][j] - M2.space[i][j]); // fabs = absolut value of float values
     }
   }
   return difference;
 }
 
-void displayMatrix(double **M, int n) {
-  if (M == NULL) {
+void displayMatrix(t_matrix M) {
+  int n = M.size;
+  if (M.space == NULL) {
     printf("Matrix is NULL\n");
     return;
   }
@@ -96,7 +103,7 @@ void displayMatrix(double **M, int n) {
   for (int i = 0; i < n; i++) {
     printf("[");
     for (int j = 0; j < n; j++) {
-      printf("%.2lf", M[i][j]);
+      printf("%.2lf", M.space[i][j]);
       if (j < n - 1) printf(" ");
     }
     printf("]");
@@ -106,25 +113,35 @@ void displayMatrix(double **M, int n) {
   printf("]\n");  // end outer bracket
 }
 
-double **powerMatrix(double **M, int n, int p) {
+t_matrix powerMatrix(t_matrix M, int p) {
   // make a copy of M as current power
-  double **R = malloc(n * sizeof(double *));
-  if (!R) return NULL;
+  t_matrix invalid = {0, NULL};
+  int n = M.size;
+  t_matrix R;
+  R.size = n;
+  R.space = malloc(n * sizeof(double *));
+  if (!R.space) return invalid;
   for (int i = 0; i < n; i++) {
-    R[i] = malloc(n * sizeof(double));
-    if (!R[i]) { for (int k = 0; k < i; k++) free(R[k]); free(R); return NULL; }
+    R.space[i] = malloc(n * sizeof(double));
+    if (!R.space[i]) { for (int k = 0; k < i; k++) free(R.space[k]); free(R.space); return invalid; }
     for (int j = 0; j < n; j++) {
-      R[i][j] = M[i][j];
+      R.space[i][j] = M.space[i][j];
     }
   }
 
   for (int e = 1; e < p; e++) {      // already M^1, do p-1 more multiplies
-    double **next = MultiplyMatrix(R, M, n);
+    t_matrix next = MultiplyMatrix(R, M);
     // free old R
-    for (int i = 0; i < n; i++) free(R[i]);
-    free(R);
+    for (int i = 0; i < n; i++) free(R.space[i]);
+    free(R.space);
     R = next;
   }
 
   return R;
 }
+
+t_matrix subMatrix(t_matrix matrix, t_partition part, int compo_index)
+{
+
+}
+
