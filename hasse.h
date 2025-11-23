@@ -3,15 +3,16 @@
 #include "list.h"
 #include "tarjan.h"
 typedef struct link {
-    int start_class;
-    int end_class;
-}t_link;
+    int start_class;   // ID of the originating class (SCC index)
+    int end_class;     // ID of the target class (SCC index)
+} t_link;
 
 typedef struct {
-    t_link *link;
-    int size;
-    int capacity;
-}t_link_array;
+    t_link *link;    // dynamic array of links (start_class → end_class)
+    int size;        // number of links currently stored
+    int capacity;    // total allocated capacity of the array
+} t_link_array;
+
 int* array_vertex_to_class(AdjacencyList adj, t_partition *partition);
 int is_link(t_link_array *array, int start, int end);
 void add_link(t_link_array *array, int start, int end) ;

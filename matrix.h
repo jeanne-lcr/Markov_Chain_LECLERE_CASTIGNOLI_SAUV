@@ -4,9 +4,9 @@
 
 typedef struct matrix
 {
- int size;
- double **space;
-}t_matrix;
+ int size;        // number of rows and columns (matrix is size x size)
+ double **space;  // pointer to an array of 'size' rows, each row is an array of 'size' doubles
+} t_matrix;
 
 t_matrix createMatrix(AdjacencyList adj);
 t_matrix createMatrixWith0(int size);
@@ -28,4 +28,6 @@ connected components.
 specified component.
  */
 t_matrix subMatrix(t_matrix matrix, t_partition part, int compo_index);
+int gcd(int *vals, int nbvals);
+int getPeriod(t_matrix sub_matrix);
 #endif //MATRIX_H

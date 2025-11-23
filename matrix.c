@@ -174,21 +174,143 @@ t_matrix powerMatrix(t_matrix M, int p)
 
 
 t_matrix subMatrix(t_matrix matrix, t_partition part, int compo_index){
-  t_class component = part.classes[compo_index];
-  t_matrix sub_matrix = createMatrixWith0(component.size);
-  int n = component.size;
+  t_class component = part.classes[compo_index]; //get the component (class) at index compo_index
+  t_matrix sub_matrix = createMatrixWith0(component.size); //create a submatrix intialized with 0.0 with dimension = number of vertices in component
+  int n = component.size; //size of the submatrix
+
+  //for every pair of vertices inside this component
   for (int i = 0; i < n; i++)
   {
-    int k = component.vertices[i].identifier -1;
+    int k = component.vertices[i].identifier -1;//global index k of vertex i in the original matrix, convert 1 based to 0-based
     for (int j = 0; j < n; j++)
     {
-      int l = component.vertices[j].identifier - 1;
+      int l = component.vertices[j].identifier - 1; //global index l of vertex j in the original matrix
       sub_matrix.space[i][j] = matrix.space[k][l];
     }
 
   }
-  return sub_matrix;
+  return sub_matrix;//return the submatrix
 }
+
+
+//Part 3 Step 3
+
+
+// Compute the Greatest Common Divisor (GCD) of a list of integers.
+// This is used to compute the period of a Markov class from all
+// the return times we have collected.
+int gcd(int *vals, int nbvals) {
+
+  // If there are no values, there is no meaningful GCD.
+  // We return 0 as a neutral / undefined value.
+  if (nbvals == 0) return 0;
+
+  // Start the GCD computation with the first value of the array.
+  int result = vals[0];
+
+  // Process each remaining value and update the running GCD.
+  for (int i = 1; i < nbvals; i++) {
+
+    // 'a' is the current GCD, 'b' is the next value to combine with it.
+    int a = result;
+    int b = vals[i];
+
+    // Euclid's algorithm: repeatedly apply (a, b) ← (b, a % b)
+    // until b becomes 0. At that point, 'a' is gcd(previous_result, vals[i]).
+    while (b != 0) {
+      int tmp = b;   // temporarily store b
+      b = a % b;     // remainder of a divided by b
+      a = tmp;       // shift b into a
+    }
+
+    // Update the running GCD with the result of this step.
+    result = a;
+  }
+
+  // Final GCD of all numbers in the array.
+  return result;
+}
+
+
+// Determines the period of a strongly connected Markov class.
+// The class is represented by its transition submatrix `sub_matrix`.
+//
+// The period is defined as the GCD of all positive integers n
+// such that it is possible to return to a state (i.e., some diagonal entry of M^n is > 0).
+// We compute powers M^1, M^2, ..., M^n and check their diagonals.
+// This is mathematically sufficient because in an n-state SCC,
+// all return times occur within the first n multiples.
+int getPeriod(t_matrix sub_matrix){
+  // Dimension of the submatrix (number of states in the class).
+  int n = sub_matrix.size;
+
+  // Array that will store all exponents 'cpt'
+  // for which a return to some state occurs (diagonal > 0).
+  int *periods = malloc(n * sizeof(int));
+  int period_count = 0;               // how many entries we actually store
+
+  // First power: P = sub_matrix^1
+  // Create an n×n zero matrix and then copy sub_matrix into it.
+  t_matrix P = createMatrixWith0(n);  // allocate P with zeros
+  P = CopyMatrix(P, sub_matrix);      // now P = sub_matrix (M^1)
+
+  // 'next' will be used to hold the result of P * sub_matrix.
+  t_matrix next;
+
+  // We check powers from 1 up to n (this is enough for SCC periodicity).
+  for (int cpt = 1; cpt <= n; cpt++) {
+
+    int diag_nonzero = 0;   // flag: does M^cpt have any positive diagonal entry?
+
+    // Scan the diagonal of the current power matrix P (which is M^cpt).
+    for (int i = 0; i < n; i++) {
+      // If P[i][i] > 0, there is a path of length cpt from i back to i.
+      if (P.space[i][i] > 0.0) {
+        diag_nonzero = 1;
+      }
+    }
+
+    // If at least one diagonal entry is positive, record this exponent.
+    if (diag_nonzero) {
+      periods[period_count] = cpt;  // store current exponent as a "return time"
+      period_count++;               // increment the number of stored periods
+    }
+
+    // If we've reached the last needed power, do not compute the next one.
+    if (cpt == n) {
+      break;
+    }
+
+    // Compute next power: next = P * sub_matrix = M^(cpt + 1).
+    next = MultiplyMatrix(P, sub_matrix);
+
+    // Free the current matrix P, because we don't need this power anymore.
+    // (We must manually free each row, then the row pointer array.)
+    for (int i = 0; i < n; i++) {
+      free(P.space[i]);
+    }
+    free(P.space);
+
+    // Update P to be the newly computed power for the next iteration.
+    P = next;
+  }
+
+  // Compute the period as the GCD of all recorded exponents.
+  int period = gcd(periods, period_count);
+
+  // Free the array of stored exponents.
+  free(periods);
+
+  // Free the last power matrix P that remains allocated.
+  for (int i = 0; i < n; i++) {
+    free(P.space[i]);
+  }
+  free(P.space);
+
+  // Return the computed period of this class.
+  return period;
+}
+
 
 
 

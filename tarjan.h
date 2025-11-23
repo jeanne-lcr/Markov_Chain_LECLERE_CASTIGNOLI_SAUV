@@ -1,12 +1,12 @@
 #ifndef TARJAN_H
 #define TARJAN_H
 #include "list.h"
-typedef struct tarjan{
-  int identifier;
-  int number;
-  int access;
-  int bool;
-}t_tarjan_vertex;
+typedef struct tarjan {
+  int identifier;   // ID of the vertex in the graph (1..n)
+  int number;       // discovery index assigned
+  int access;       // lowest reachable index (lowlink value)
+  int bool;         // boolean: is the vertex currently on the Tarjan stack?
+} t_tarjan_vertex;
 
 typedef struct class {
   char *name; // name of the class, exemple : C1, C2,...
@@ -21,10 +21,10 @@ typedef struct partition{
   int capacity;//physical size
 }t_partition;
 
-typedef struct stack{
-  int values[100];
-  int nbElmts;
-}t_stack;
+typedef struct stack {
+  int values[100];   // container for stack elements (max capacity = 100)
+  int nbElmts;       // number of elements currently in the stack
+} t_stack;
 
 t_tarjan_vertex* arrayVertices(AdjacencyList adj);
 void Initialization_Stack( t_stack* stack);

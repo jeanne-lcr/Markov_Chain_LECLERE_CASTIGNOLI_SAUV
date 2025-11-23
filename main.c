@@ -107,6 +107,59 @@ int main() {
 
     }
 
+    //PART 3 STEP 3
+    printf("\n\n\n\n PART 3 STEP 3\n");
+    for (int i = 0; i < part.size; i++)      // Loop through all SCC classes
+    {
+        printf("Class %d (Step 3)\n", i);     // Print the class index we are processing
+
+        // Rebuild submatrix for this class
+        // 'subMatrix' extracts the transition matrix restricted to the vertices
+        // belonging to the SCC class 'i'.
+        t_matrix B = subMatrix(M, part, i);
+
+        printf("Submatrix:\n");
+        displayMatrix(B);                     // Show the submatrix on screen
+
+        // Compute the period of this class
+        // getPeriod(B) computes the GCD of all return times n such that (B^n)[k][k] > 0.
+        int period = getPeriod(B);
+        printf("Period of class %d: %d\n", i, period);   // Display the period
+
+        // If the period is 1 → the class is aperiodic (has a unique stationary distribution)
+        if (period == 1) {
+            printf(" -> Class %d is aperiodic.\n", i);
+
+            // Compute a large power of B to approximate the stationary distribution
+            int p = 100;                                  // exponent (large enough for convergence)
+            t_matrix B_power = powerMatrix(B, p);         // B_power ≈ B^p
+
+            printf("Associated stationary distribution for class %d (row 0 of B^%d):\n[", i, p);
+            for (int j = 0; j < B_power.size; j++) {
+                printf(" %.4lf", B_power.space[0][j]);    // first row of B^p
+            }
+            printf(" ]\n");
+
+            // Free B_power (each row then the pointer array)
+            for (int r = 0; r < B_power.size; r++)
+                free(B_power.space[r]);
+            free(B_power.space);
+        }
+        // Otherwise, period > 1 → the class is periodic
+        else {
+            printf(" -> Class %d is periodic with period %d.\n", i, period);
+            printf("    (no unique stationary distribution given by the limit of B^n)\n");
+        }
+
+        //  we free each row and then the row-pointer array for B.
+        for (int r = 0; r < B.size; r++)
+            free(B.space[r]);                 // Free each row of B
+        free(B.space);                        // Free the pointer array
+
+        printf("\n");                         // Extra line for readability
+    }
+
+
 
 
 
