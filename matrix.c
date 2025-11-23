@@ -142,16 +142,20 @@ t_matrix powerMatrix(t_matrix M, int p)
     R.space[i] = malloc(n * sizeof(double)); //allocation of columns
     if (!R.space[i])
     {
-      for (int k = 0; k < i; k++){//free previously allocated rows if error
+      //free previously allocated rows if error
+      for (int k = 0; k < i; k++)
+      {
         free(R.space[k]);
-        free(R.space);//free row pointer array
-        return invalid;//return invalid matrix
       }
+      free(R.space); //free row pointer array
+      return invalid;//return invalid matrix
+    }
+
       for (int j = 0; j < n; j++) {
         R.space[i][j] = M.space[i][j]; //copy row i from M into R
       }
     }
-    //we already have have R=M^1
+    //we already have R=M^1
     //multiply repeatedly to reach M to the power p
     for (int e = 1; e < p; e++) {      // already M^1, do p-1 more multiplies
       t_matrix next = MultiplyMatrix(R, M); //next matrix is matrix R times the original one M
@@ -166,9 +170,10 @@ t_matrix powerMatrix(t_matrix M, int p)
     }
 
     return R;//return final result matrix
-  }
+}
 
-t_matrix subMatrix(t_matrix matrix, t_partition part, int compo_index)
+
+t_matrix subMatrix(t_matrix matrix, t_partition part, int compo_index){
   t_class component = part.classes[compo_index];
   t_matrix sub_matrix = createMatrixWith0(component.size);
   int n = component.size;
@@ -184,5 +189,11 @@ t_matrix subMatrix(t_matrix matrix, t_partition part, int compo_index)
   }
   return sub_matrix;
 }
-}
+
+
+
+
+
+
+
 
