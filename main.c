@@ -10,11 +10,12 @@
 
 
 int main() {
+    //PART 1
     AdjacencyList adj;
     adj = readGraph("../data/exemple_valid_step3.txt");
-    //checkMarkovGraph(adj);
-    //displayAdjacencyList(adj);
-    //convertForMermaid(adj, "mermaid2.txt" );
+    checkMarkovGraph(adj);
+    displayAdjacencyList(adj);
+    convertForMermaid(adj, "mermaid2.txt" );
 
     //PART 2 STEP 2
     t_partition partition;                                   // declare a partition structure to store Tarjan's SCC classes
@@ -66,11 +67,37 @@ int main() {
 
 
     //PART 3 STEP 1
-    //AdjacencyList adj2 = readGraph("../data/exemple_meteo.txt");
-    //t_matrix M= createMatrix(adj2);
-    //displayMatrix(M);
-    //printf("\n");
-    //t_matrix M7 = powerMatrix(M, 7);
-    //displayMatrix(M7);
+    AdjacencyList adj2 = readGraph("../data/exemple_meteo.txt");
+    t_matrix M= createMatrix(adj2);
+    displayMatrix(M);
+    printf("\n");
+    t_matrix M7 = powerMatrix(M, 7);
+    displayMatrix(M7);
+
+    //PART 3 STEP 2
+    t_partition part;
+    tarjan(adj2, &part);
+    printf("Number of classes (SCCs) : %d\n", part.size );
+    for (int i = 0; i < part.size; i++)
+    {
+        printf("---Class %d---\n", i);
+        t_matrix B= subMatrix(M,part, i);
+        printf("Submatrix:\n");
+        displayMatrix(B);
+        t_matrix B_power= powerMatrix(B, 100);
+        printf("PowerMatrix:\n");
+        displayMatrix(B_power);
+        printf("Stationary distribution of class %d:\n[", i);
+
+        for (int j = 0; j < B.size; j++)
+        {
+            printf("%.4lf",B_power.space[0][j]);
+
+        }
+        printf("]\n\n");
+
+    }
+
+
     return 0;
 }
