@@ -13,7 +13,7 @@ t_tarjan_vertex* arrayVertices(AdjacencyList adj){
     t_tarjan_vertex* arr = malloc(adj.size*sizeof(t_tarjan_vertex));
     //loop through each vertex index from 0 to adj.size -1
     for (int i = 0; i < adj.size; i++){
-        arr[i].identifier = adj.list[i].head->arrival; //set the identifier of vertex i using the arrival field of its adjacency list head
+        arr[i].identifier = i+1; //set the identifier of vertex i using the arrival field of its adjacency list head
         arr[i].number = -1; //initialize Tarjan number to -1 meaning it has not been visited yet
         arr[i].access = -1; //initialize Tarjan access to -1 (low-link value)
         arr[i].bool = 0;//initialize the boolean flag to 0, meaning that it is not in stack
@@ -153,7 +153,9 @@ void parcours(int v,AdjacencyList *G,t_tarjan_vertex *V,int *num,t_stack *P,t_pa
 
 //This function displays all classes of the partition and the list of vertex identifiers in each class
 void display_partition(t_partition *partition) {
-    for (int i = 0; i < partition->size; i++) { // loop over all classes stored in the partition
+    for (int i = 0; i < partition->size; i++)
+    {
+        // loop over all classes stored in the partition
         t_class *C = &partition->classes[i]; // get a pointer to the current class
 
         printf("%s : {", C->name);// print the class name followed by an opening brace
@@ -163,9 +165,10 @@ void display_partition(t_partition *partition) {
             if (j < C->size - 1) // if this is not the last vertex in the class
                 printf(", "); // print a comma and a space to separate the vertices
         }
-        }
+
 
         printf("}\n"); // close the brace and go to the next line
+    }
 }
 
 

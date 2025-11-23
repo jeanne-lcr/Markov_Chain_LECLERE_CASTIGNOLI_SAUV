@@ -11,13 +11,17 @@
 
 int main() {
     //PART 1
+    printf(" PART 1\n");
     AdjacencyList adj;
     adj = readGraph("../data/exemple_valid_step3.txt");
     checkMarkovGraph(adj);
     displayAdjacencyList(adj);
+    printf("\n");
     convertForMermaid(adj, "mermaid2.txt" );
+    printf("\n");
 
     //PART 2 STEP 2
+    printf("\n\n\n\n PART 2 STEP 2\n");
     t_partition partition;                                   // declare a partition structure to store Tarjan's SCC classes
 
     tarjan(adj, &partition);                                 // run Tarjan’s algorithm on the adjacency list 'adj'
@@ -52,6 +56,7 @@ int main() {
 
 
     //PART 2 STEP 3
+    printf("\n\n\n\n PART 2 STEP 3\n");
     graph_characteristics(&partition, &link_array); // print transient classes, persistent classes, absorbing states, irreducibility
 
     // free the array of links between classes
@@ -67,6 +72,7 @@ int main() {
 
 
     //PART 3 STEP 1
+    printf("\n\n\n\n PART 3 STEP 1\n");
     AdjacencyList adj2 = readGraph("../data/exemple_meteo.txt");
     t_matrix M= createMatrix(adj2);
     displayMatrix(M);
@@ -75,9 +81,12 @@ int main() {
     displayMatrix(M7);
 
     //PART 3 STEP 2
+    printf("\n\n\n\n PART 3 STEP 2\n");
     t_partition part;
     tarjan(adj2, &part);
-    printf("Number of classes (SCCs) : %d\n", part.size );
+    printf("Matrix :\n");
+    displayMatrix(M);
+    printf("\nNumber of classes (SCCs) : %d\n", part.size );
     for (int i = 0; i < part.size; i++)
     {
         printf("---Class %d---\n", i);
@@ -91,12 +100,14 @@ int main() {
 
         for (int j = 0; j < B.size; j++)
         {
-            printf("%.4lf",B_power.space[0][j]);
+            printf("%.2lf ",B_power.space[0][j]);
 
         }
         printf("]\n\n");
 
     }
+
+
 
 
     return 0;
