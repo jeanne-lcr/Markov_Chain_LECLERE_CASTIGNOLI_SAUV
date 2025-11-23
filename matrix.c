@@ -142,6 +142,15 @@ t_matrix powerMatrix(t_matrix M, int p) {
 
 t_matrix subMatrix(t_matrix matrix, t_partition part, int compo_index)
 {
+  t_matrix sub_matrix;
+  t_class component = part.classes[compo_index];
+  sub_matrix = createMatrixWith0(component.size);
 
+  sub_matrix.space = malloc(component.size * sizeof(double *));
+  for (int i = 0; i < component.size; i++)
+  {
+    sub_matrix.space[i] = malloc(component.size * sizeof(double));
+
+  }
 }
 
